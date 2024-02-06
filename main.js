@@ -42,6 +42,7 @@ async function obterToken(){
 }
 
 function pesquisar() {
+    document.body.querySelector('#parcelamentos').innerHTML = ''
     let consulta = document.querySelector("input").value
     consultar(removerPontuacaoCNPJ(consulta));
 }
