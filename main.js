@@ -27,8 +27,8 @@ async function obterToken(){
             'sec-ch-ua-platform': '"Windows"'        
         },
         body: JSON.stringify({
-          'email': 'bianca.silva@villelabrasil.com.br',
-          'senha': 'villela2022'
+          'email': 'weriqui.souza@villelabrasilbank.com.br',
+          'senha': 'Werique18_@'
         })
     });
 
