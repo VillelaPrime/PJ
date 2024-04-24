@@ -7,7 +7,7 @@ async function obterToken(){
         return tokenSalvo;
     }
 
-    const response = await fetch('https://back-villela2.aceleradorvillela.com/api/acesso', {
+    const response = await fetch('https://back-villela.aceleradorvillela.com/api/acesso', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -53,7 +53,7 @@ async function consultar(cnpj) {
         let token = await obterToken();
 
 
-        const response = await fetch(`https://back-ecac2.aceleradorvillela.com/api/lead/buscar?cnpj=${cnpj}`, {
+        const response = await fetch(`https://back-villela.aceleradorvillela.com/api/lead/buscar?cnpj=${cnpj}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -84,7 +84,7 @@ async function consultar(cnpj) {
         let novoToken = await obterToken();
             
         // Refaz a consulta com o novo token
-        const novaResposta = await fetch(`https://back-ecac2.aceleradorvillela.com/api/lead/buscar?cnpj=${cnpj}`, {
+        const novaResposta = await fetch(`https://back-villela.aceleradorvillela.com/api/lead/buscar?cnpj=${cnpj}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -116,7 +116,7 @@ async function consultar(cnpj) {
 
 async function parcelamentos(id, token) {
     try {
-        const response = await fetch(`https://back-ecac2.aceleradorvillela.com/api/leaddetalhes/${id}/parcelados`, {
+        const response = await fetch(`https://back-villela.aceleradorvillela.com/api/leaddetalhes/${id}/parcelados`, {
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
