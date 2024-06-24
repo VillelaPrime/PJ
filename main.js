@@ -28,7 +28,7 @@ async function obterToken(){
         },
         body: JSON.stringify({
           'email': 'weriqui.souza@villelabrasilbank.com.br',
-          'senha': 'Werique20_@'
+          'senha': '5gLKi3rLVd9ed@'
         })
     });
 
