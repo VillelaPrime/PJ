@@ -7,7 +7,7 @@ async function obterToken(){
         return tokenSalvo;
     }
 
-    const response = await fetch('api/tokenget');
+    const response = await fetch('https://villela-pro-6405962cedab.herokuapp.com/api/tokenget');
 
     const data = await response.json();
     const token = data['token'];
