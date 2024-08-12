@@ -287,6 +287,15 @@ function inserirTabelas(cnpj, data, modalidade, nome_empresa, qnt_parcelas, valo
     document.body.querySelector('#parcelamentos').innerHTML += html
 }
 
+function verificaSituacaoDoParcelamentoParcelamento(listaDeDicionarios){
+    for (i of listaDeDicionarios){
+        if ((i.SituacaoDoParcelamento === "DEFERIDO E CONSOLIDADO")||(i.SituacaoDoParcelamento === "AGUARDANDO DEFERIMENTO")){
+            return false
+            break
+        }
+    }
+    return true
+}
 
 function formatarNumero(numero) {
     // Converte o número para string e arredonda para duas casas decimais
