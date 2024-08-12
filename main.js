@@ -7,7 +7,7 @@ async function obterToken(){
         return tokenSalvo;
     }
 
-    const response = await fetch('https://villela-pro-6405962cedab.herokuapp.com/api/tokenget');
+    const response = await fetch('api/tokenget');
 
     const data = await response.json();
     const token = data['token'];
@@ -26,184 +26,174 @@ async function pesquisar() {
 
 
 async function consultar(cnpj) {
-    try{
-        let token = await obterToken();
 
+    const response = await fetch(`https://villela-pro-6405962cedab.herokuapp.com//api/consultar/${cnpj}/`)
 
-        const response = await fetch(`https://back-ecac.aceleradorvillela.com/api/lead/buscar?cnpj=${cnpj}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
-                'Authorization': `Bearer ${token}`,
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive',
-                'Origin': 'https://portal.aceleradorvillela.com',
-                'Pragma': 'no-cache',
-                'Referer': 'https://portal.aceleradorvillela.com/',
-                'Sec-Fetch-Dest': 'empty',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Site': 'same-site',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                'sec-ch-ua-mobile': '?0',
-                'sec-ch-ua-platform': '"Windows"'
-            }
-        });
+    const data = await response.json();
 
-        const data = await response.json();
+    parcelamentos(data);
+    /*prev(data["id"], token,data["cnpj"],data["razao"],);
+    nao_prev(data["id"], token,data["cnpj"],data["razao"],);8?*/
 
-
-        return parcelamentos(data["id"], token);
-
-    } catch (error) {
-        localStorage.removeItem('token');
-        let novoToken = await obterToken();
-            
-        // Refaz a consulta com o novo token
-        const novaResposta = await fetch(`https://back-ecac.aceleradorvillela.comapi/lead/buscar?cnpj=${cnpj}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
-                'Authorization': `Bearer ${token}`,
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive',
-                'Origin': 'https://portal.aceleradorvillela.com',
-                'Pragma': 'no-cache',
-                'Referer': 'https://portal.aceleradorvillela.com/',
-                'Sec-Fetch-Dest': 'empty',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Site': 'same-site',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                'sec-ch-ua-mobile': '?0',
-                'sec-ch-ua-platform': '"Windows"'
-            }
-        });
-
-        // Obtém os dados da nova resposta
-        const novosDados = await novaResposta.json();
-
-        // Retorna os dados da nova consulta
-        return parcelamentos(novosDados["id"], novoToken)
-    }
-    
 }
 
-async function parcelamentos(id, token) {
+async function parcelamentos(data) {
     try {
-        const response = await fetch(`https://back-ecac.aceleradorvillela.com/api/leaddetalhes/${id}/parcelados`, {
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6',
-                'Authorization': `Bearer ${token}`,
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive',
-                'Origin': 'https://portal.aceleradorvillela.com',
-                'Pragma': 'no-cache',
-                'Referer': 'https://portal.aceleradorvillela.com/',
-                'Sec-Fetch-Dest': 'empty',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Site': 'same-site',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                'sec-ch-ua-mobile': '?0',
-                'sec-ch-ua-platform': '"Windows"'
+        console.log(data)
+        if (data.length==0){
+            const modalContent = `
+               <dialog id="modal" class="modal">
+                   <div class="modal-content">
+                       <p>Nenhum Parcelamento Encontrado</p>
+                       <button id="closeButton">Fechar</button>
+                   </div>
+               </dialog>
+           `;
+
+            // Adicionar o modal ao corpo do documento
+            document.body.insertAdjacentHTML('beforeend', modalContent);
+
+            // Obter referências aos elementos do modal
+            const modal = document.getElementById('modal');
+            const closeButton = modal.querySelector('.close');
+            const closeDialogButton = modal.querySelector('#closeButton');
+
+            // Função para fechar o modal
+            function fecharModal() {
+                // Fechar o modal
+                modal.close();
+                modal.remove()
             }
-        });
 
-        const data = await response.json();
-        for (let i = 0; i < data.length; i++) {
-            const lista = data[i];
+            // Adicionar evento de clique ao botão de fechar
+            closeDialogButton.addEventListener('click', fecharModal);
 
-            if ((lista["situacao"] === "DEFERIDO E CONSOLIDADO" || lista["situacao"] === "AGUARDANDO DEFERIMENTO") && lista["qtdeDeParcelasConcedidas"] > 12) {
+            // Exibir o modal
+            modal.showModal();
 
-                let prima;
-                let primo;
-                let cnpj = lista['cpfCnpjDoOptante']
-                let data_parcelamento = lista['mesAnoRequerimento']
-                let modalidade = lista['tipoDeParcelamento']
-                let nome_empresa = lista['nomeDoOptante']
-                let qnt_parcelas = lista['qtdeDeParcelasConcedidas']
-                let valor_consolidado = lista['valorConsolidado']
-                let valor_principal = lista['valorDoPrincipal']
-                let valor_parcelas;
-                let qnt_parcelas_reducao;
-                if (lista['tipoDeParcelamento'].indexOf("TRANSACAO EXCEPCIONAL") !== -1){
-                    if(lista['tipoDeParcelamento'].indexOf("DEBITOS PREVIDENCIARIOS") !== -1) {
-                        valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/48
-                        prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/48')
-                    } else {
-                        valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/(qnt_parcelas-12)
-                        prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/(qnt_parcelas-12)')
-                    }
-                    
-                } else if (lista['modalidade'].indexOf("TRANSACAO EXTRAORDINARIA") !== -1){
-                    if (lista['tipoDeParcelamento'].indexOf("PREVIDENCIARIO") !== -1) {
-                        valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/48
-                        prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/48')
-                    } else {
-                        valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/(qnt_parcelas-12)
-                        prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/(qnt_parcelas-12)')
-                    }
-                } else if (lista['tipoDeParcelamento'].indexOf("EDITAL") !== -1){
-                    if ((lista['tipoDeParcelamento'].indexOf("PREVIDENCIARIO") !== -1)|(lista['tipoDeParcelamento'].indexOf("DEBITOS PREV") !== -1)) {
-                        if (lista['modalidade'].indexOf("PEQUENO PORTE") !== -1) {
-                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/48
-                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/48')
+        }else{
+
+            for (lista of data)  {
+
+                if ((lista["SituacaoDoParcelamento"] === "DEFERIDO E CONSOLIDADO" || lista["SituacaoDoParcelamento"] === "AGUARDANDO DEFERIMENTO") && lista["QtdeDeParcelasConcedidas"] > 12) {
+
+                    let prima;
+                    let primo;
+                    let cnpj = lista['CpfCnpjDoOptante']
+                    let data_parcelamento = lista['MesAnoDoRequerimentoDoParcelamento']
+                    let ModalidadeDoParcelamento = lista['TipoDeParcelamento']
+                    let nome_empresa = lista['NomeDoOptante']
+                    let qnt_parcelas = lista['QtdeDeParcelasConcedidas']
+                    let valor_consolidado = lista['ValorConsolidado']
+                    let valor_principal = lista['ValorDoPrincipal']
+                    let valor_parcelas;
+                    let qnt_parcelas_reducao;
+                    if (lista['TipoDeParcelamento'].indexOf("TRANSACAO EXCEPCIONAL") !== -1){
+                        if(lista['TipoDeParcelamento'].indexOf("DEBITOS PREVIDENCIARIOS") !== -1) {
+                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/48
+                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/48')
                         } else {
-                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/54
-                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/54')
+                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/(qnt_parcelas-12)
+                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.04))/(qnt_parcelas-12)')
                         }
-                    } else {
-                        if (lista['modalidade'].indexOf("PEQUENO PORTE") !== -1) {
-                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-12)
-                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-12)')
+
+                    } else if (lista['ModalidadeDoParcelamento'].indexOf("TRANSACAO EXTRAORDINARIA") !== -1){
+                        if (lista['TipoDeParcelamento'].indexOf("PREVIDENCIARIO") !== -1) {
+                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/48
+                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/48')
                         } else {
-                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-6)
-                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-6)')
+                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/(qnt_parcelas-12)
+                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.01))/(qnt_parcelas-12)')
+                        }
+                    } else if (lista['TipoDeParcelamento'].indexOf("EDITAL") !== -1){
+                        if (lista['TipoDeParcelamento'].indexOf("PREVIDENCIARIO") !== -1) {
+                            if (lista['ModalidadeDoParcelamento'].indexOf("PEQUENO PORTE") !== -1) {
+                                valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/48
+                                prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/48')
+                            } else {
+                                valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/54
+                                prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/54')
+                            }
+                        } else {
+                            if (lista['ModalidadeDoParcelamento'].indexOf("PEQUENO PORTE") !== -1) {
+                                valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-12)
+                                prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-12)')
+                            } else {
+                                valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-6)
+                                prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.06))/(qnt_parcelas-6)')
+                            }
+                        }
+                    } else if (lista['TipoDeParcelamento'].indexOf("CONVENCIONAL") !== -1 || lista['TipoDeParcelamento'].indexOf("PARCELAMENTO DA RECUPERACAO JUDICIAL") !== -1){
+                        if (lista['TipoDeParcelamento'].indexOf("NAO PREVIDENCIARIA") !== -1) {
+                            valor_parcelas = valor_consolidado/qnt_parcelas
+                            prima = console.log('valor_parcelas = valor_principal/qnt_parcelas')
+                        } else {
+                            valor_parcelas = valor_consolidado/60
+                            prima = console.log('valor_parcelas = valor_principal/60')
+                        }
+                    } else if (lista['TipoDeParcelamento'].indexOf("PERT") !== -1) {
+                        if (lista['TipoDeParcelamento'].indexOf("DEBITOS PREVIDENCIARIOS") !== -1) {
+                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/60
+                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/60')
+                        } else {
+                            valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/qnt_parcelas
+                            prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/qnt_parcelas')
                         }
                     }
-                } else if (lista['tipoDeParcelamento'].indexOf("CONVENCIONAL") !== -1 || lista['tipoDeParcelamento'].indexOf("PARCELAMENTO DA RECUPERACAO JUDICIAL") !== -1){
-                    if (lista['tipoDeParcelamento'].indexOf("NAO PREVIDENCIARIA") !== -1) {
-                        valor_parcelas = valor_consolidado/qnt_parcelas
-                        prima = console.log('valor_parcelas = valor_principal/qnt_parcelas')
+
+
+
+                    if (lista["TipoDeParcelamento"].indexOf("PREVIDENCIARIO") !== -1 || lista["ModalidadeDoParcelamento"].indexOf("PREVIDENCIARIO") !== -1) {
+                        qnt_parcelas_reducao = 60
                     } else {
-                        valor_parcelas = valor_consolidado/60
-                        prima = console.log('valor_parcelas = valor_principal/60')
+                        qnt_parcelas_reducao = 145
                     }
-                } else if (lista['tipoDeParcelamento'].indexOf("PERT") !== -1) {
-                    if (lista['tipoDeParcelamento'].indexOf("DEBITOS PREVIDENCIARIOS") !== -1) {
-                        valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/60
-                        prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/60')
-                    } else {
-                        valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/qnt_parcelas
-                        prima = console.log('valor_parcelas = (valor_consolidado - (valor_consolidado*0.15))/qnt_parcelas')
+
+                    inserirTabelas(cnpj, data_parcelamento, ModalidadeDoParcelamento, nome_empresa, qnt_parcelas, valor_consolidado, valor_principal, valor_parcelas, qnt_parcelas_reducao)
+
+
+                }
+                if(verificaSituacaoDoParcelamentoParcelamento(data)) {
+                    const modalContent = `
+                       <dialog id="modal" class="modal">
+                           <div class="modal-content">
+                               <p>Nenhum Parcelamento Ativo</p>
+                               <button id="closeButton">Fechar</button>
+                           </div>
+                       </dialog>
+                   `;
+
+                    // Adicionar o modal ao corpo do documento
+                    document.body.insertAdjacentHTML('beforeend', modalContent);
+
+                    // Obter referências aos elementos do modal
+                    const modal = document.getElementById('modal');
+                    const closeButton = modal.querySelector('.close');
+                    const closeDialogButton = modal.querySelector('#closeButton');
+
+                    // Função para fechar o modal
+                    function fecharModal() {
+                        // Fechar o modal
+                        modal.close();
+                        modal.remove()
                     }
+
+                    // Adicionar evento de clique ao botão de fechar
+                    closeDialogButton.addEventListener('click', fecharModal);
+
+                    // Exibir o modal
+                    modal.showModal();
                 }
 
 
 
-                if (lista["tipoDeParcelamento"].indexOf("PREVIDENCIARIO") !== -1 || lista["modalidade"].indexOf("PREVIDENCIARIO") !== -1 || lista['tipoDeParcelamento'].indexOf("DEBITOS PREV") !== -1) {
-                    qnt_parcelas_reducao = 60
-                } else {
-                    qnt_parcelas_reducao = 145
-                }
-    
-                inserirTabelas(cnpj, data_parcelamento, modalidade, nome_empresa, qnt_parcelas, valor_consolidado, valor_principal, valor_parcelas, qnt_parcelas_reducao)
-                
-                
             }
-        
-            
-            
         }
-        
+
     } catch (error) {
         console.error('Erro ao buscar os dados:', error);
     }
-    
+
 }
 
 //parcelamentos();
