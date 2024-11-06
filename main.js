@@ -1,22 +1,6 @@
 let pesquisa = document.querySelector("button")
 
-async function obterToken(){
-    // Verificar se já existe um token no localStorage
-    const tokenSalvo = localStorage.getItem('token');
-    if (tokenSalvo) {
-        return tokenSalvo;
-    }
 
-    const response = await fetch('api/tokenget');
-
-    const data = await response.json();
-    const token = data['token'];
-
-    // Salvar o token no localStorage
-    localStorage.setItem('token', token);
-
-    return token;
-}
 
 async function pesquisar() {
     document.body.querySelector('#parcelamentos').innerHTML = ''
