@@ -1,26 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista</title>
-    <link rel="stylesheet" href="style.css">
-    
-</head>
-<body>
-    <header>
-        <div id="centro">
-            <search id="pesquisar">
-                <input type="text" id="busca" name="q" placeholder="Digite o CNPJ">
-                <button id="submit" onclick="pesquisar()">Consultar</button>
-            </search>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Serviço Descontinuado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[#0B1625] min-h-screen flex items-center justify-center p-6">
+    <div class="bg-[#111D33] text-white p-10 rounded-2xl max-w-2xl w-full shadow-xl border border-[#1F2C42]">
+      <div class="text-center space-y-4">
+        <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+          <span class="text-white">Villela</span><span class="text-cyan-400"> Pro</span>
+        </h1>
+        <p class="text-lg text-gray-300">Seu sistema</p>
+        <p class="text-xl md:text-2xl mt-4 font-semibold">
+          Este serviço foi <span class="text-red-400">descontinuado</span>.
+        </p>
+        <p class="text-md text-gray-400">
+          Mas não se preocupe, em breve teremos <span class="text-cyan-400 font-medium">novidades incríveis!</span> 🚀
+        </p>
+        <div class="mt-6">
+          <button
+            class="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition duration-200 shadow-md"
+          >
+            Me avise quando voltar
+          </button>
         </div>
-    </header>
-    <main>
-        <img src="fundo.png" alt="">
-        <div id="parcelamentos"></div>
-    </main>
-    <footer><p>© 2024 Villela Brasil Bank. Todos os direitos reservados. CNPJ: 31.655.393/0001-03</p><p>Developed by Weriqui F. Souza</p></footer>
-</body>
-<script src="main.js"></script>
+      </div>
+    </div>
+  </body>
 </html>
